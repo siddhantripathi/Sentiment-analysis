@@ -1,0 +1,7 @@
+{
+    "scripts": {
+      "build:frontend": "cd frontend && flutter build web --release --web-renderer html",
+      "build:backend": "pip install -r backend/requirements.txt",
+      "build": "npm run build:frontend && npm run build:backend"
+    }
+  }

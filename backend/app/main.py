@@ -8,7 +8,12 @@ from .model_handler import load_bertweet_model
 from .preprocessor import preprocess_tweet
 load_dotenv()
 
+
+from fastapi import FastAPI
+from mangum import Mangum
+
 app = FastAPI()
+handler = Mangum(app)
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,7 +29,7 @@ HF_API_URL = "https://api-inference.huggingface.co/models/finiteautomata/bertwee
 HF_TOKEN = os.getenv("HF_API_TOKEN")
 
 @app.post("/analyze")
-async def analyze_text(request: TextRequest):
+async def analyze_text(text: str):
     try:
         headers = {"Authorization": f"Bearer {HF_TOKEN}"}
         response = requests.post(
