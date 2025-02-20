@@ -1,4 +1,5 @@
-To use-> in terminal follow these commands in order:  
+LifeStages sentiment analysis microservice
+To use-> in terminal follow these commands in order (from root directory):  
 
   cd backend
   
