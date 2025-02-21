@@ -6,22 +6,24 @@ import requests
 from dotenv import load_dotenv
 from .model_handler import load_bertweet_model
 from .preprocessor import preprocess_tweet
-load_dotenv()
-
-
-from fastapi import FastAPI
 from mangum import Mangum
+
+load_dotenv()
 
 app = FastAPI()
 handler = Mangum(app)
 
+# Simple CORS setup that allows everything
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["POST"],
+    allow_credentials=True,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
+class SentimentRequest(BaseModel):
+    text: str
 class TextRequest(BaseModel):
     text: str
 
@@ -29,7 +31,7 @@ HF_API_URL = "https://api-inference.huggingface.co/models/finiteautomata/bertwee
 HF_TOKEN = os.getenv("HF_API_TOKEN")
 
 @app.post("/analyze")
-async def analyze_text(text: str):
+async def analyze_text(request: TextRequest):
     try:
         headers = {"Authorization": f"Bearer {HF_TOKEN}"}
         response = requests.post(

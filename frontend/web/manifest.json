@@ -1,11 +1,11 @@
 {
-    "name": "sentiment_analysis",
-    "short_name": "sentiment_analysis",
+    "name": "Sentiment Analysis",
+    "short_name": "Sentiment",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "description": "A sentiment analysis application",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

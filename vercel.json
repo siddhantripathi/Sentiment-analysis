@@ -1,29 +1,23 @@
 {
+    "version": 2,
     "builds": [
       {
-        "src": "frontend/pubspec.yaml",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "build/web",
-          "buildCommand": "flutter build web --release --web-renderer html"
-        }
+        "src": "backend/app/main.py",
+        "use": "@vercel/python"
       },
       {
-        "src": "backend/app/main.py",
-        "use": "@vercel/python",
-        "config": {
-          "maxLambdaSize": "15mb",
-          "includeFiles": [
-            "backend/app/**/*.py",
-            "backend/requirements.txt"
-          ]
-        }
+        "src": "frontend/build/web/**",
+        "use": "@vercel/static"
       }
     ],
     "routes": [
       {
         "src": "/api/(.*)",
         "dest": "backend/app/main.py"
+      },
+      {
+        "src": "/manifest.json",
+        "dest": "frontend/build/web/manifest.json"
       },
       {
         "src": "/(.*)",

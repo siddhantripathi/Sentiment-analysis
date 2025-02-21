@@ -1,31 +1,40 @@
 // frontend/lib/services/api_service.dart
+
+import '../models/sentiment.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/sentiment.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://localhost:8000';//localhost:8000';
-Future<Sentiment> analyzeText(String text) async {
-  try {
-    final response = await http.post(
-      Uri.parse('$_baseUrl/analyze'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'text': text}),
-    );
+  // Try the newer Vercel URL
+  static const String baseUrl = 'https://sentiment-analysis-puocpossn-siddhantripathis-projects.vercel.app';
+  
+  Future<Sentiment> analyzeText(String text) async {
+    try {
+      // Add error logging to see what's happening
+      print('Sending request to: $baseUrl/api/analyze');
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/analyze'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'text': text,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      if (jsonResponse is! Map<String, dynamic>) {
-        throw Exception('Invalid response format');
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        return Sentiment.fromJson(data);
+      } else {
+        throw Exception('Failed to analyze sentiment: ${response.statusCode} - ${response.body}');
       }
-      return Sentiment.fromJson(jsonResponse);
-    } else {
-      throw Exception('Failed with status: ${response.statusCode}');
+    } catch (e) {
+      print('Detailed error: $e');
+      throw Exception('Failed to analyze sentiment');
     }
-  } on http.ClientException catch (e) {
-    throw Exception('Network error: ${e.message}');
-  } on FormatException {
-    throw Exception('Invalid JSON format');
   }
-}
 }
