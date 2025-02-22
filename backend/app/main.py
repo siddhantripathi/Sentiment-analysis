@@ -26,7 +26,7 @@ class SentimentRequest(BaseModel):
     text: str
 class TextRequest(BaseModel):
     text: str
-
+#https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis
 HF_API_URL = "https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis"
 HF_TOKEN = os.getenv("HF_API_TOKEN")
 
@@ -41,12 +41,14 @@ async def analyze_text(request: TextRequest):
             timeout=10
         )
         
-        # Handle model loading errors
+        # Handle model loading errors more gracefully
         if response.status_code == 503:
-            raise HTTPException(
-                status_code=503,
-                detail="Model is currently loading, please try again in a few seconds"
-            )
+            return {
+                "sentiment": "LOADING",
+                "confidence": 0,
+                "original_text": request.text,
+                "message": "Model is loading, please try again in a few seconds"
+            }
             
         if response.status_code != 200:
             raise HTTPException(
