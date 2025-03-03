@@ -1,28 +1,34 @@
 class Sentiment {
-  final String sentiment;
+  final String emotion;
   final double confidence;
   final String emoji;
 
   Sentiment({
-    required this.sentiment,
+    required this.emotion,
     required this.confidence,
-    required this.emoji,
-  });
+  }) : emoji = _getEmoji(emotion);
 
   factory Sentiment.fromJson(Map<String, dynamic> json) {
     return Sentiment(
-      sentiment: json['sentiment'] ?? 'NEUTRAL',
-      confidence: (json['confidence'] ?? 0.0).toDouble(),
-      emoji: _getEmoji(json['sentiment']?.toString().toUpperCase() ?? 'NEUTRAL'),
+      emotion: json['emotion'],
+      confidence: json['confidence'].toDouble(),
     );
   }
 
-  static String _getEmoji(String sentiment) {
-    switch (sentiment) {
-      case 'POSITIVE':
-        return '😊';
-      case 'NEGATIVE':
-        return '😠';
+  static String _getEmoji(String emotion) {
+    switch (emotion.toUpperCase()) {
+      case 'JOY':
+        return '😀';
+      case 'SADNESS':
+        return '😭';
+      case 'ANGER':
+        return '🤬';
+      case 'FEAR':
+        return '😨';
+      case 'DISGUST':
+        return '🤢';
+      case 'SURPRISE':
+        return '😲';
       case 'NEUTRAL':
       default:
         return '😐';

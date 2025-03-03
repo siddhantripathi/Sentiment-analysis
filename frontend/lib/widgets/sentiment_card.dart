@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../models/sentiment.dart';
 
@@ -14,8 +13,17 @@ class SentimentCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text('Sentiment: \${sentiment.sentiment}'),
-            Text('Confidence: \${(sentiment.confidence * 100).toStringAsFixed(1)}%'),
+            Text(
+              sentiment.emoji,
+              style: const TextStyle(fontSize: 48),
+            ),
+            Text(
+              'Emotion: ${sentiment.emotion.toLowerCase()}',
+              style: const TextStyle(fontSize: 24),
+            ),
+            Text(
+              'Confidence: ${(sentiment.confidence * 100).toStringAsFixed(1)}%'
+            ),
           ],
         ),
       ),
