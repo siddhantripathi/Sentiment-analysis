@@ -27,7 +27,7 @@ class SentimentRequest(BaseModel):
 class TextRequest(BaseModel):
     text: str
 #https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis
-HF_API_URL = "https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis"
+HF_API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
 HF_TOKEN = os.getenv("HF_API_TOKEN")
 
 @app.post("/analyze")
@@ -37,48 +37,26 @@ async def analyze_text(request: TextRequest):
         response = requests.post(
             HF_API_URL,
             headers=headers,
-            json={"inputs": request.text},
-            timeout=10
+            json={"inputs": request.text}
         )
+        response.raise_for_status()
         
-        # Handle model loading errors more gracefully
-        if response.status_code == 503:
-            return {
-                "sentiment": "LOADING",
-                "confidence": 0,
-                "original_text": request.text,
-                "message": "Model is loading, please try again in a few seconds"
-            }
-            
-        if response.status_code != 200:
-            raise HTTPException(
-                status_code=response.status_code,
-                detail=f"Hugging Face API error: {response.text}"
-            )
-            
-        result = response.json()[0]
-        best_result = max(result, key=lambda x: x['score'])
-        
-        label_map = {
-            'POS': 'POSITIVE',
-            'NEG': 'NEGATIVE', 
-            'NEU': 'NEUTRAL'
-        }
+        # Get all emotion scores
+        emotions = response.json()[0]
+        # Find emotion with highest score
+        max_emotion = max(emotions, key=lambda x: x['score'])
         
         return {
-            "sentiment": label_map.get(best_result['label'], 'NEUTRAL'),
-            "confidence": best_result['score'],
-            "original_text": request.text
+            "emotion": max_emotion['label'].upper(),
+            "confidence": max_emotion['score']
         }
-
     except requests.exceptions.RequestException as e:
         raise HTTPException(
-            status_code=500,
+            status_code=503,
             detail=f"Network error: {str(e)}"
         )
-        
     except Exception as e:
         raise HTTPException(
-            status_code=500,
+            status_code=500, 
             detail=f"Unexpected error: {str(e)}"
         )
