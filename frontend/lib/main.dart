@@ -105,7 +105,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: _controller,
                 decoration: const InputDecoration(
                   hintText: 'Enter text to analyze',
+                  border: OutlineInputBorder(),
                 ),
+                autofocus: false,
+                focusNode: FocusNode(),
+                onTap: () {
+                  if (!FocusScope.of(context).hasFocus) {
+                    FocusScope.of(context).unfocus();
+                    FocusScope.of(context).requestFocus();
+                  }
+                },
               ),
             ),
             ElevatedButton(

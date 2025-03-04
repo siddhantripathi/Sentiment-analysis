@@ -10,8 +10,8 @@ class Sentiment {
 
   factory Sentiment.fromJson(Map<String, dynamic> json) {
     return Sentiment(
-      emotion: json['emotion'],
-      confidence: json['confidence'].toDouble(),
+      emotion: json['emotion'] ?? 'NEUTRAL',
+      confidence: (json['confidence'] ?? 0.0).toDouble(),
     );
   }
 
